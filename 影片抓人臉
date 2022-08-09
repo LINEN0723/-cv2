@@ -1,0 +1,26 @@
+import cv2
+cap = cv2.VideoCapture(0)
+cap.set(3,160)
+cap.set(4,120)
+cap.set(cv2.CAP_PROP_FPS, 30)   
+if not cap.isOpened():
+    print("Can't open camera !")
+    exit()
+while(True):    
+    ret, frame = cap.read()
+    if not ret:
+        print("Can't receive frame")
+        break      
+    gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+    color = (71,1,0)
+    face_classifier = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
+    faceRects = face_classifier.detectMultiScale(frame, scaleFactor=1.2, minNeighbors=1, minSize=(1, 96))
+    if len(faceRects):  
+        for faceRect in faceRects: 
+            a, y, w, h = faceRect
+            cv2.rectangle(frame, (a, y), (a + h, y + w), color, 3)
+    cv2.imshow('frame', frame)
+    if cv2.waitKey(1) == ord('q'):
+                break
+cap.release()
+cv2.destroyAllWindows()
